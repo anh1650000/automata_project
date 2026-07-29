@@ -7,33 +7,44 @@ class DFA:
         self.accept_states = set(accept_states)
 
     def validate_structure(self):
-        """Kiểm tra tính hợp lệ của DFA bằng các thao tác trên tập hợp (Set)"""
         if self.start_state not in self.states:
-            return False, f"Trạng thái bắt đầu '{self.start_state}' không thuộc tập trạng thái Q!"
-        
-        # Thao tác tập con: accept_states phải là tập con của states
+            return False, f"Trạng thái bắt đầu '{self.start_state}' không thuộc tập Q!"
         if not self.accept_states.issubset(self.states):
             invalid = self.accept_states - self.states
-            return False, f"Trạng thái kết thúc {invalid} không nằm trong tập trạng thái Q!"
-            
+            return False, f"Trạng thái kết thúc {invalid} không thuộc tập Q!"
         return True, "Cấu hình DFA hợp lệ."
 
     def process_string(self, input_string):
-        """Chạy chuỗi và trả về: (Kết quả, Vết trạng thái, Thông báo)"""
+        """
+        Trả về: 
+        - is_accept: True/False
+        - transitions_taken: Danh sách tuple [(q_from, char, q_to), ...]
+        - id_configs: Danh sách cấu hình hình thế [(q_current, remaining_str), ...]
+        - msg: Thông báo kết quả
+        """
         current_state = self.start_state
-        path = [current_state]
+        transitions_taken = []
+        id_configs = [(current_state, input_string if input_string else "ε")]
 
-        for char in input_string:
+        if not input_string:
+            is_accept = current_state in self.accept_states
+            msg = "CHẤP NHẬN (ACCEPT)" if is_accept else "TỪ CHỐI (REJECT)"
+            return is_accept, transitions_taken, id_configs, msg
+
+        for i, char in enumerate(input_string):
             if char not in self.alphabet:
-                return False, path, f"Ký tự '{char}' không thuộc bảng chữ cái Σ!"
+                return False, transitions_taken, id_configs, f"Ký tự '{char}' không thuộc bảng chữ cái Σ!"
             
             next_state = self.transitions.get((current_state, char))
             if next_state is None:
-                return False, path, f"Không có hàm chuyển cho ({current_state}, {char})"
-            
+                return False, transitions_taken, id_configs, f"Không có hàm chuyển δ({current_state}, '{char}')"
+
+            transitions_taken.append((current_state, char, next_state))
             current_state = next_state
-            path.append(current_state)
+            
+            remaining = input_string[i+1:] if i+1 < len(input_string) else "ε"
+            id_configs.append((current_state, remaining))
 
         is_accept = current_state in self.accept_states
-        msg = "Chấp nhận (ACCEPT)" if is_accept else "Từ chối (REJECT)"
-        return is_accept, path, msg
+        msg = "CHẤP NHẬN (ACCEPT)" if is_accept else "TỪ CHỐI (REJECT)"
+        return is_accept, transitions_taken, id_configs, msg

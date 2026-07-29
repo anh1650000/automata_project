@@ -2,7 +2,6 @@ from PyQt5.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, 
     QPushButton, QTableWidget, QTableWidgetItem, QSpinBox, QHeaderView, QMessageBox
 )
-from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QColor
 from utils.tools import AutomataTools
 
@@ -32,7 +31,7 @@ class ItertoolsTab(QWidget):
 
         self.tbl_results = QTableWidget()
         self.tbl_results.setColumnCount(4)
-        self.tbl_results.setHorizontalHeaderLabels(["STT", "Chuỗi Đầu Vào", "Kết Quả DFA", "Vết Trạng Thái"])
+        self.tbl_results.setHorizontalHeaderLabels(["STT", "Chuỗi Đầu Vào", "Kết Quả DFA", "Vết Trạng Thái (ID)"])
         self.tbl_results.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
         layout.addLayout(ctrl_layout)
@@ -50,7 +49,7 @@ class ItertoolsTab(QWidget):
 
         self.tbl_results.setRowCount(0)
         for idx, tc in enumerate(test_cases):
-            is_accept, path, msg = dfa.process_string(tc)
+            is_accept, transitions, id_configs, msg = dfa.process_string(tc)
             self.tbl_results.insertRow(idx)
             self.tbl_results.setItem(idx, 0, QTableWidgetItem(str(idx + 1)))
             self.tbl_results.setItem(idx, 1, QTableWidgetItem(tc))
@@ -58,8 +57,10 @@ class ItertoolsTab(QWidget):
             res_item = QTableWidgetItem("ACCEPT" if is_accept else "REJECT")
             res_item.setForeground(QColor("#2b9348" if is_accept else "#d90429"))
             self.tbl_results.setItem(idx, 2, res_item)
-            self.tbl_results.setItem(idx, 3, QTableWidgetItem(" ➔ ".join(path)))
+            
+            # Format dạng (q0, aab) ⊢ (q1, ab)...
+            id_trace_str = " ⊢ ".join([f"({st},{rem})" for st, rem in id_configs])
+            self.tbl_results.setItem(idx, 3, QTableWidgetItem(id_trace_str))
 
-        # Gửi kết quả sang Tab Editor qua Callback
         self.on_send_to_editor("\n".join(test_cases))
         QMessageBox.information(self, "Thông báo", f"Đã sinh {len(test_cases)} chuỗi và nạp vào Trình Soạn Thảo (Tab 1)!")

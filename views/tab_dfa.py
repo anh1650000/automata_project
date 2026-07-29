@@ -5,7 +5,6 @@ from PyQt5.QtWidgets import (
 )
 from models.dfa import DFA
 
-# Dữ liệu mặc định
 DEFAULT_STATES = "q0, q1, q2"
 DEFAULT_ALPHABET = "a, b"
 DEFAULT_START = "q0"
@@ -23,7 +22,6 @@ class DFATab(QWidget):
         layout.setSpacing(12)
         form_layout = QFormLayout()
 
-        # Tạo các trường nhập liệu
         self.txt_states = QLineEdit()
         self.txt_alphabet = QLineEdit()
         self.txt_start = QLineEdit()
@@ -37,9 +35,7 @@ class DFATab(QWidget):
         form_layout.addRow("Tập trạng thái đích F:", self.txt_accept)
         form_layout.addRow("Hàm chuyển δ (s,c->next):", self.txt_transitions)
 
-        # Hàng chứa 2 nút hành động: Cập nhật & Reset
         action_bar = QHBoxLayout()
-        
         btn_build = QPushButton("⚡ Cập Nhật Cấu Hình DFA")
         btn_build.setProperty("primary", "true")
         btn_build.clicked.connect(self.build_dfa_from_ui)
@@ -50,43 +46,39 @@ class DFATab(QWidget):
         action_bar.addWidget(btn_build, stretch=2)
         action_bar.addWidget(btn_reset, stretch=1)
 
-        # Khu vực mô phỏng chạy thử
         test_layout = QHBoxLayout()
         self.txt_single_input = QLineEdit()
-        self.txt_single_input.setPlaceholderText("Nhập chuỗi để xem vết di chuyển (vd: aab)")
+        self.txt_single_input.setPlaceholderText("Nhập chuỗi để mô phỏng (vd: aab)")
         btn_run_single = QPushButton("Chạy Thử Vết")
         btn_run_single.clicked.connect(self.test_single_string)
         test_layout.addWidget(self.txt_single_input)
         test_layout.addWidget(btn_run_single)
 
-        self.lbl_trace = QLabel("Vết di chuyển: ")
+        self.lbl_trace = QLabel("Vết di chuyển sẽ hiển thị ở đây...")
         self.lbl_trace.setWordWrap(True)
+        self.lbl_trace.setStyleSheet("background-color: #f1f3f5; padding: 12px; border-radius: 6px; line-height: 1.5;")
 
         layout.addLayout(form_layout)
         layout.addLayout(action_bar)
         layout.addSpacing(10)
-        layout.addWidget(QLabel("<b>Mô phỏng luồng vết di chuyển trạng thái (Trace):</b>"))
+        layout.addWidget(QLabel("<b>Mô phỏng luồng chuyển trạng thái (Chuẩn Giáo Trình):</b>"))
         layout.addLayout(test_layout)
         layout.addWidget(self.lbl_trace)
         layout.addStretch()
         
         self.setLayout(layout)
-        
-        # Nạp dữ liệu mặc định ban đầu
         self.reset_to_default(show_message=False)
 
     def reset_to_default(self, show_message=True):
-        """Khôi phục cấu hình DFA về mặc định"""
         self.txt_states.setText(DEFAULT_STATES)
         self.txt_alphabet.setText(DEFAULT_ALPHABET)
         self.txt_start.setText(DEFAULT_START)
         self.txt_accept.setText(DEFAULT_ACCEPT)
         self.txt_transitions.setText(DEFAULT_TRANSITIONS)
-        self.lbl_trace.setText("Vết di chuyển: ")
+        self.lbl_trace.setText("Vết di chuyển sẽ hiển thị ở đây...")
         self.txt_single_input.clear()
         
         self.build_dfa_from_ui()
-        
         if show_message:
             QMessageBox.information(self, "Thông báo", "Đã khôi phục cấu hình DFA về mặc định!")
 
@@ -122,8 +114,33 @@ class DFATab(QWidget):
     def test_single_string(self):
         if not self.current_dfa: return
         inp = self.txt_single_input.text().strip()
-        is_accept, path, msg = self.current_dfa.process_string(inp)
+        is_accept, transitions, id_configs, msg = self.current_dfa.process_string(inp)
         
-        path_str = " ➔ ".join(path)
         color = "#2b9348" if is_accept else "#d90429"
-        self.lbl_trace.setText(f"<b>Kết quả:</b> <font color='{color}'>{msg}</font><br><b>Luồng dịch chuyển:</b> {path_str}")
+
+        # 1. Biểu diễn dạng Sơ đồ mũi tên có Ký tự: q0 --'a'--> q1 --'a'--> q1 --'b'--> q2
+        arrow_path = ""
+        if transitions:
+            steps = [f"<b>{st}</b>" for st, _, _ in transitions] + [f"<b>{transitions[-1][2]}</b>"]
+            arrow_steps = []
+            for idx, (st, c, nst) in enumerate(transitions):
+                arrow_steps.append(f"<b>{st}</b> ──<font color='#4361ee'><b>'{c}'</b></font>──➔ ")
+            arrow_steps.append(f"<b>{transitions[-1][2]}</b>")
+            arrow_path = "".join(arrow_steps)
+        else:
+            arrow_path = f"<b>{self.current_dfa.start_state}</b>"
+
+        # 2. Biểu diễn dạng Hình thế / Cấu hình (ID) toán học trong Slide: (q0, aab) ⊢ (q1, ab) ⊢ (q1, b) ⊢ (q2, ε)
+        id_path = " <b>⊢</b> ".join([f"({st}, <i>{rem}</i>)" for st, rem in id_configs])
+
+        # 3. Biểu diễn chi tiết từng bước hàm chuyển δ
+        delta_steps = "<br>".join([f"• δ({st}, '<font color='#4361ee'><b>{c}</b></font>') = <b>{nst}</b>" for st, c, nst in transitions])
+
+        html_result = f"""
+        <b>Kết quả:</b> <font color='{color}'><b>{msg}</b></font><br><br>
+        <b>1. Sơ đồ dịch chuyển:</b> {arrow_path}<br><br>
+        <b>2. Ký hiệu Hình thế toán học (Slide ID):</b><br>&nbsp;&nbsp;&nbsp;&nbsp;{id_path}<br><br>
+        <b>3. Chi tiết hàm chuyển δ:</b><br>{delta_steps if delta_steps else "• Không có bước chuyển nào"}
+        """
+        
+        self.lbl_trace.setText(html_result)
