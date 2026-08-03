@@ -1,17 +1,19 @@
 # 📝 Regex Text Editor Studio & DFA Visualizer
 
-> **Đồ án môn học:** Tin học Lý thuyết (Mã học phần: CT121/01)
-> **Trường:** Công nghệ Thông tin & Truyền thông - Đại học Cần Thơ
-> **Giảng viên hướng dẫn:** ThS. Phạm Xuân Hiền
-> **Sinh viên thực hiện:** Phạm Duy Anh - MSSV: B2308346 (Khoa học Máy tính - K49)
+> **Đồ án môn học:** Tin học Lý thuyết (Mã học phần: CT121/01)  
+> **Trường:** Công nghệ Thông tin & Truyền thông - Đại học Cần Thơ  
+> **Giảng viên hướng dẫn:** ThS. Phạm Xuân Hiền  
+> **Sinh viên thực hiện:** Phạm Duy Anh - MSSV: B2308346 (Khoa học Máy tính - K49)  
 
 ---
 
 ## 📌 Giới thiệu dự án
 
-**Regex Text Editor Studio** là ứng dụng soạn thảo văn bản tích hợp bộ mô phỏng Automata hữu hạn đơn định (DFA) và công cụ tìm kiếm theo Biểu thức chính quy (Regex)[cite: 3]. Dự án kết hợp giữa ứng dụng thực tiễn của xử lý văn bản và cơ sở lý thuyết ngôn ngữ chính quy trong Tin học Lý thuyết[cite: 3].
+**Regex Text Editor Studio** là ứng dụng soạn thảo văn bản tích hợp bộ mô phỏng Automata hữu hạn đơn định (DFA) và công cụ tìm kiếm theo Biểu thức chính quy (Regex).
 
-Phần mềm được xây dựng bằng ngôn ngữ **Python** kết hợp thư viện đồ họa **PyQt5**, **NetworkX** và **Matplotlib**[cite: 3].
+Dự án kết hợp giữa ứng dụng thực tiễn của xử lý văn bản và cơ sở lý thuyết ngôn ngữ chính quy trong Tin học Lý thuyết.
+
+Phần mềm được xây dựng bằng ngôn ngữ **Python** kết hợp thư viện đồ họa **PyQt5**, **NetworkX** và **Matplotlib**.
 
 ---
 
