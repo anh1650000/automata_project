@@ -124,11 +124,18 @@ class EditorTab(QWidget):
             return
 
         text = self.editor_area.toPlainText()
-        lines = [line.strip() for line in text.split("\n") if line.strip()]
+        raw_lines = text.split("\n")
         
-        if not lines:
+        if len(raw_lines) == 1 and not raw_lines[0].strip():
             QMessageBox.warning(self, "Cảnh báo", "Trình soạn thảo đang trống!")
             return
+
+        lines = []
+        for line in raw_lines:
+            stripped = line.strip()
+            if not stripped:
+                continue
+            lines.append("" if stripped == "ε" else stripped)
 
         accept_count = sum(1 for line in lines if dfa.process_string(line)[0])
         reject_count = len(lines) - accept_count

@@ -94,7 +94,8 @@ class ItertoolsTab(QWidget):
         # Áp dụng bộ lọc
         self.filter_results()
 
-        self.on_send_to_editor("\n".join(test_cases))
+        display_cases = [tc if tc else "ε" for tc in test_cases]
+        self.on_send_to_editor("\n".join(display_cases))
         QMessageBox.information(self, "Thông báo", f"Đã sinh {len(test_cases)} chuỗi và nạp vào Trình Soạn Thảo (Tab 1)!")
 
     def filter_results(self):

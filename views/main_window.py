@@ -10,7 +10,7 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("Text Editor Studio - Trình Soạn Thảo Văn Bản & Regex/DFA")
         self.setGeometry(100, 100, 950, 680)
 
-        # Áp dụng CSS giao diện
+        #CSS
         self.setStyleSheet(MODERN_QSS)
 
         self.init_ui()
@@ -21,19 +21,18 @@ class MainWindow(QMainWindow):
         
         self.tabs = QTabWidget()
 
-        # 1. Tạo Tab DFA trước để lấy dữ liệu
+        # DFA 
         self.tab_dfa = DFATab()
 
-        # 2. Tạo Tab Editor (Truyền callback lấy DFA)
+        #Tab Editor
         self.tab_editor = EditorTab(get_dfa_callback=lambda: self.tab_dfa.current_dfa)
 
-        # 3. Tạo Tab Itertools (Truyền callback lấy DFA + Callback nạp chữ sang Editor)
+        # Tab Itertools (Truyền callback lấy DFA + Callback nạp chữ sang Editor)
         self.tab_itertools = ItertoolsTab(
             get_dfa_callback=lambda: self.tab_dfa.current_dfa,
             on_send_to_editor_callback=self.tab_editor.set_text
         )
 
-        # Lắp ghép các Tab vào Window
         self.tabs.addTab(self.tab_editor, "📝  1. Trình Soạn Thảo & Regex")
         self.tabs.addTab(self.tab_dfa, "⚙️  2. Cấu Hình DFA")
         self.tabs.addTab(self.tab_itertools, "🔄  3. Sinh Test Case")

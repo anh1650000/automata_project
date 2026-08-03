@@ -4,8 +4,8 @@ import re
 class AutomataTools:
     @staticmethod
     def generate_all_strings(alphabet, max_len):
-        """Sinh tất cả các chuỗi từ bảng chữ cái có độ dài từ 1 đến max_len"""
-        results = []
+        """Sinh tất cả các chuỗi từ bảng chữ cái, có bao gồm chuỗi rỗng ε."""
+        results = [""]
         for l in range(1, max_len + 1):
             for p in itertools.product(alphabet, repeat=l):
                 results.append("".join(p))
