@@ -1,9 +1,9 @@
 # 📝 Regex Text Editor Studio & DFA Visualizer
 
-> **Đồ án môn học:** Tin học Lý thuyết (Mã học phần: CT121/01)[cite: 3]  
-> **Trường:** Công nghệ Thông tin & Truyền thông - Đại học Cần Thơ[cite: 3]  
-> **Giảng viên hướng dẫn:** ThS. Phạm Xuân Hiền[cite: 3]  
-> **Sinh viên thực hiện:** Phạm Duy Anh - MSSV: B2308346 (Khoa học Máy tính - K49)[cite: 3]  
+> **Đồ án môn học:** Tin học Lý thuyết (Mã học phần: CT121/01)
+> **Trường:** Công nghệ Thông tin & Truyền thông - Đại học Cần Thơ
+> **Giảng viên hướng dẫn:** ThS. Phạm Xuân Hiền
+> **Sinh viên thực hiện:** Phạm Duy Anh - MSSV: B2308346 (Khoa học Máy tính - K49)
 
 ---
 
